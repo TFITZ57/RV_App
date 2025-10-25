@@ -1,26 +1,22 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-FastAPI services live in `backend/`, with routers under `backend/routers/` and long-running logic in `backend/services/`. Shared config and DB helpers are in `backend/config.py` and `backend/db.py`. Browser assets (`index.html`, `app.js`, `styles.css`) stay under `backend/static/` to keep the monitor UI self-contained. Automation utilities (`scripts/init_db.py`, `scripts/package_targets.py`) seed the SQLite database and seal target pools; run them before launching the server. Protocol docs, API references, and monitor prompts live in `docs/`. Targets and judging packs reside in `targets/`, while regression tests sit in `tests/` alongside fixtures.
+FastAPI APIs are under `backend/` with request routers in `backend/routers/` and business logic services in `backend/services/`. Shared config and DB helpers live in `backend/config.py` and `backend/db.py`. Static browser assets (`index.html`, `app.js`, `styles.css`) stay in `backend/static/` so the monitor UI deploys with the API. Database schemas and automation helpers run from `scripts/`. Targets and packaging outputs are stored in `targets/`, while docs, protocol references, and prompts sit in `docs/`. Tests mirror the runtime modules inside `tests/`.
 
 ## Build, Test, and Development Commands
-- `python -m venv .venv && source .venv/bin/activate` — standard environment used across the repo.
-- `pip install -r requirements.txt` — installs FastAPI, Pydantic, and other runtime deps.
-- `pip install -r requirements-dev.txt` — adds pytest + Ruff for local QA.
-- `python scripts/init_db.py` — creates/updates the SQLite schema defined in `backend/schema.sql`.
-- `python scripts/package_targets.py` — hashes media in `targets/` and emits `targets.yaml`.
-- `uvicorn backend.app:app --reload` — launches the API plus static UI for local sessions.
-- `pytest` or `pytest tests/test_scoring.py -k scoring` — runs the Pytest suite or focused modules.
-- `make lint | make test` — wrappers for Ruff linting and the default pytest run.
+`python -m venv .venv && source .venv/bin/activate` creates the shared virtualenv. Install runtime deps via `pip install -r requirements.txt` and add QA tooling with `pip install -r requirements-dev.txt`. Seed or upgrade the SQLite database using `python scripts/init_db.py`, and regenerate sealed targets with `python scripts/package_targets.py`. Run the API plus static UI locally using `uvicorn backend.app:app --reload`. Execute `make lint` for Ruff checks/import order and `make test` (pytest `--maxfail=1`) for regression coverage.
 
 ## Coding Style & Naming Conventions
-Follow PEP 8 with 4-space indentation. Keep modules and functions in `snake_case`, classes and Pydantic models in `PascalCase`, and constants/env keys in `UPPER_SNAKE_CASE`. Use explicit type hints on service boundaries (e.g., scoring, guardrails) and prefer dependency-injected FastAPI routers over global state. Run `make lint` (Ruff check + import order) before pushing if you modify HTTP handlers or services.
+Follow PEP 8 with 4-space indentation. Modules and functions use `snake_case`, classes and Pydantic models use `PascalCase`, and config keys or constants stay `UPPER_SNAKE_CASE`. Keep FastAPI routers dependency-injected—avoid global state. Add explicit type hints at service boundaries and prefer meaningful docstrings over inline comments. Run Ruff before committing to catch formatting or import-order drift.
 
 ## Testing Guidelines
-Pytest is the supported harness; place new specs under `tests/` and name files `test_<area>.py`. Mirror the production module structure (e.g., `tests/test_tasker.py`). For features affecting scoring or protocol enforcement, add property-level assertions plus regression fixtures. Aim for coverage on database writes, monitor FSM transitions, and target sealing logic. Run `make test` (which invokes `pytest --maxfail=1`) before submitting.
+Pytest is the canonical harness; add new specs under `tests/` named `test_<area>.py` mirroring the production package layout. Target scoring logic, guardrails, and DB writes need regression coverage plus property-style assertions when possible. Use focused runs such as `pytest tests/test_scoring.py -k scoring` when iterating, then finish with `make test`.
 
 ## Commit & Pull Request Guidelines
-History favors imperative Conventional-style summaries (`feat:`, `fix:`, `chore:`). Keep messages under 72 chars in the subject and include concise body details when touching scripts or schema. PRs must explain: purpose, key endpoints touched, schema or protocol changes, and any manual testing (commands + outcomes). Link tracking issues and attach screenshots/GIFs when UI assets change.
+Use Conventional-style subjects (e.g., `feat: add guardrail voting`) under 72 characters, with optional bodies explaining scripts or schema shifts. PRs should describe the purpose, list endpoints or services touched, note schema/protocol deltas, and capture manual verification commands. Link tracking issues and share screenshots or GIFs whenever UI assets under `backend/static/` change.
 
-## Security & Configuration Notes
-Never commit `.env` or real `RV_TASKER_SECRET` values; copy from `.env.example` and inject secrets locally. Treat packaged targets as sensitive—regenerate `targets.yaml` whenever media changes. Optional CLIP helpers require extra deps; isolate that install in a separate environment if you do not need GPU access.
+## Security & Configuration Tips
+Never commit `.env` or real `RV_TASKER_SECRET` values—copy from `.env.example` and inject locally. Treat media in `targets/` as sensitive; regenerate `targets.yaml` whenever assets shift. Optional CLIP helpers need extra dependencies, so isolate them in a separate env if GPU tooling is unnecessary.
+
+## LLM Monitor Integration
+Set `LLM_MONITOR_ENABLED=1`, provide `LLM_API_KEY`, and choose `LLM_MODEL`/`LLM_BASE_URL` to let an OpenAI-compatible chat model drive monitor prompts. The backend enforces the utterance whitelist and falls back to the finite-state prompts automatically when credentials are missing or the provider errors.

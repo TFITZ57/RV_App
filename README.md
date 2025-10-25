@@ -44,7 +44,17 @@ Copy `.env.example` to `.env` and set values.
 
 - `RV_TASKER_SECRET` — secret key for HMAC Target IDs. **Change this!**
 - `DB_PATH` — SQLite file path (default: `rvmonitor.db`).
-- `USE_CLIP` — `1` to enable CLIP pre‑ranking if you install the optional deps.
+- `USE_CLIP` — `1` to enable CLIP pre-ranking if you install the optional deps.
+- `LLM_MONITOR_ENABLED` — set to `1` to let an external LLM drive monitor prompts.
+- `LLM_API_KEY` — API key for your provider (OpenAI-compatible REST today).
+- `LLM_MODEL` — chat completion model name (defaults to `gpt-4o-mini`).
+- `LLM_BASE_URL` — override if you proxy or self-host an OpenAI-compatible stack.
+
+---
+
+## Wiring in your preferred LLM
+
+The monitor now supports OpenAI-compatible chat completions for neutral prompts. Configure the env vars above, restart `uvicorn`, and every `/sessions/log` call will send the viewer text + stage label to your LLM. The system prompt constrains responses to the whitelist in `docs/MONITOR_PROMPTS.md`; if the request fails or returns invalid JSON, the app falls back to the deterministic FSM guardrails so sessions remain unblocked. Because the REST contract is OpenAI-style, you can point `LLM_BASE_URL` at hosted third parties (e.g., Together, Anyscale) or your own gateway that mimics `/chat/completions`.
 
 ---
 
