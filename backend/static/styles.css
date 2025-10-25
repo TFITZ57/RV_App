@@ -1,0 +1,20 @@
+:root{
+  --bg:#0b0f14; --fg:#e7eef6; --muted:#aab8c6; --card:#121922; --accent:#5fb2ff; --border:#1b2836;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);}
+header{padding:2rem 1rem;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(95,178,255,0.08),rgba(0,0,0,0));}
+h1{margin:0;font-size:1.6rem}
+.sub{color:var(--muted);margin:0.25rem 0 0}
+main{max-width:900px;margin:1rem auto;padding:0 1rem;display:grid;grid-template-columns:1fr;gap:1rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;box-shadow:0 0 0 1px rgba(255,255,255,0.02) inset}
+label{display:block;margin:0.6rem 0 0.25rem;color:var(--muted);font-size:0.9rem}
+textarea, select{width:100%;background:#0e151d;color:var(--fg);border:1px solid var(--border);border-radius:8px;padding:0.7rem;font-family:var(--mono)}
+button{background:var(--accent);color:#001628;border:none;border-radius:8px;padding:0.6rem 0.9rem;font-weight:600;cursor:pointer}
+button:disabled{opacity:0.5;cursor:not-allowed}
+.row{display:flex;gap:0.6rem;margin-top:0.6rem}
+.monitor{margin-top:0.6rem;background:#0e151d;border:1px dashed var(--border);border-radius:8px;padding:0.6rem;font-family:var(--mono)}
+#sessionInfo, #judgingOut{font-family:var(--mono)}
+footer{max-width:900px;margin:1rem auto;padding:0 1rem 2rem;color:var(--muted);}

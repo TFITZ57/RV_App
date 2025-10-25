@@ -1,0 +1,46 @@
+# OS files
+.DS_Store
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.so
+*.dylib
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Coverage & test outputs
+.coverage
+.coverage.*
+htmlcov/
+.pyre/
+
+# Tooling & IDEs
+.idea/
+.vscode/
+.ipynb_checkpoints/
+
+# Logs & local databases
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Node / frontend extras
+node_modules/

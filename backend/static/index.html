@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RV Monitor Agent</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>RV Monitor Agent</h1>
+    <p class="sub">Solo training with a protocol‑safe AI monitor</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Start Session</h2>
+      <button id="btnStart">Start</button>
+      <div id="sessionInfo"></div>
+    </section>
+
+    <section class="card">
+      <h2>Stage & Input</h2>
+      <label for="stage">Stage</label>
+      <select id="stage">
+        <option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option><option>VI</option>
+      </select>
+
+      <label for="viewerInput">Your notes (type what you would write saying out loud):</label>
+      <textarea id="viewerInput" rows="6" placeholder="Raw descriptors only..."></textarea>
+      <div class="row">
+        <button id="btnSend">Send</button>
+        <button id="btnAdvance">Advance Stage</button>
+      </div>
+      <div id="monitorOut" class="monitor"></div>
+    </section>
+
+    <section class="card">
+      <h2>Finish & Judge</h2>
+      <button id="btnFinish">Finish Session</button>
+      <button id="btnJudge">Run Judging</button>
+      <div id="judgingOut"></div>
+    </section>
+  </main>
+
+  <footer>
+    <small>&copy; 2025 &middot; MIT License</small>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
