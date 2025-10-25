@@ -1,3 +1,4 @@
+import logging
 import uuid
 
 from fastapi import APIRouter
@@ -5,9 +6,11 @@ from pydantic import BaseModel
 
 from ..db import get_conn
 from ..services.monitor_fsm import MonitorState, Stage, advance_stage, next_monitor_output
+from ..services.monitor_llm import MonitorLLMError, llm_monitor
 from ..services.tasker import choose_target
 
 router = APIRouter()
+log = logging.getLogger(__name__)
 
 class StartResponse(BaseModel):
     session_id: str
@@ -45,7 +48,14 @@ def log_viewer_input(req: LogRequest):
         )
     # Generate monitor output
     state = MonitorState(session_id=req.session_id, stage=req.stage)
-    utterance, _ = next_monitor_output(state, req.viewer_text)
+    if llm_monitor.enabled:
+        try:
+            utterance, _ = llm_monitor.generate(state, req.viewer_text)
+        except MonitorLLMError as exc:
+            log.warning("LLM monitor failed; falling back to FSM: %s", exc)
+            utterance, _ = next_monitor_output(state, req.viewer_text)
+    else:
+        utterance, _ = next_monitor_output(state, req.viewer_text)
     return LogResponse(monitor_prompt=utterance)
 
 class AdvanceRequest(BaseModel):
